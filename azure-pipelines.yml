@@ -1,0 +1,12 @@
+pool:
+  vmImage: "vs2017-win2016"
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "10.x"
+  - script: |
+      docker run -d --memory 2GB --name "azure-cosmosdb-emulator" --mount "type=bind,source=D:\a\1\s,destination=C:\CosmosDB.Emulator\bind-mount" -P microsoft/azure-cosmosdb-emulator
+      docker exec -d "azure-cosmosdb-emulator" powershell C:\CosmosDB.Emulator\bind-mount\admin.ps1
+      netstat -at
+      npm ci && npm run build && npm run test && npm run test-ts && npm run test-browser
